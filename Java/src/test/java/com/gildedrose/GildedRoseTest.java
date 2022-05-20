@@ -208,4 +208,28 @@ class GildedRoseTest {
 
         assertEquals(0, app.items[0].quality);
     }
+
+    @Test
+    void updateQuality_withConjuredItem_shouldDecreaseQualityTwiceAsFast() {
+        Item[] items = new Item[] {
+            new Item("Conjured", 20, 40),
+        };
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(38, app.items[0].quality);
+    }
+
+    @Test
+    void updateQuality_withExpiredConjuredItem_shouldDecreaseQualityTwiceAsFast() {
+        Item[] items = new Item[] {
+            new Item("Conjured", 0, 40),
+        };
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(36, app.items[0].quality);
+    }
 }

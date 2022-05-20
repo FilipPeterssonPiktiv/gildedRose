@@ -35,6 +35,11 @@ class GildedRose {
                         }
                     }
                     break;
+                case "Conjured":
+                    final int conjuredRate = expired ? 4 : 2;
+
+                    item.quality = Math.max(item.quality - conjuredRate, 0);
+                    break;
                 default:
                     final int rate = expired ? 2 : 1;
 
