@@ -49,6 +49,7 @@ describe('Gilded Rose', () => {
       expect(items[1].sellIn).toBe(5);
     });
   });
+
   describe('with aged brie', () => {
     it('should increase in quality as time passes', () => {
       const expectedItems = [
@@ -86,4 +87,49 @@ describe('Gilded Rose', () => {
     });
   });
 
+  describe('with backstage pass', () => {
+    it('should increase in quality as time passes', () => {
+      const expectedItems = [
+        new Item('Backstage passes to a TAFKAL80ETC concert', 11, 1),
+      ];
+      const gildedRose = new GildedRose(expectedItems);
+
+      const items = gildedRose.updateQuality();
+
+      expect(items[0].quality).toBe(2);
+    });
+    
+    it('should increase in quality by 3 within 10 days or less of expiry', () => {
+      const expectedItems = [
+        new Item('Backstage passes to a TAFKAL80ETC concert', 6, 1),
+      ];
+      const gildedRose = new GildedRose(expectedItems);
+
+      const items = gildedRose.updateQuality();
+
+      expect(items[0].quality).toBe(3);
+    });
+
+    it('should increase in quality by 3 within 5 days or less of expiry', () => {
+      const expectedItems = [
+        new Item('Backstage passes to a TAFKAL80ETC concert', 3, 1),
+      ];
+      const gildedRose = new GildedRose(expectedItems);
+
+      const items = gildedRose.updateQuality();
+
+      expect(items[0].quality).toBe(4);
+    });
+
+    it('should get quality 0 after expiry', () => {
+      const expectedItems = [
+        new Item('Backstage passes to a TAFKAL80ETC concert', 0, 1),
+      ];
+      const gildedRose = new GildedRose(expectedItems);
+
+      const items = gildedRose.updateQuality();
+
+      expect(items[0].quality).toBe(0);
+    });
+  });
 });
