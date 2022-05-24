@@ -36,5 +36,17 @@ describe('Gilded Rose', () => {
 
       expect(items[0].sellIn).toBe(5);
     });
+
+    it('should update items after a legendary item', () => {
+      const expectedItems = [
+        new Item('Sulfuras, Hand of Ragnaros', 5, 30),
+        new Item('A Regular Item', 6, 20)
+      ];
+      const gildedRose = new GildedRose(expectedItems);
+
+      const items = gildedRose.updateQuality();
+
+      expect(items[1].sellIn).toBe(5);
+    });
   });
 });
