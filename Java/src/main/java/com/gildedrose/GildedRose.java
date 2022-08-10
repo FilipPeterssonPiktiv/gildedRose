@@ -1,14 +1,17 @@
 package com.gildedrose;
 
+import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
+
 class GildedRose {
     private static final String AGED_BRIE = "Aged Brie";
-    private static final String SULFURAS = "Sulfuras";
+    private static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
     private static final String BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
 
     private static final int MAX_DEFAULT_QUALITY = 50;
     private static final int SULFUR_QUALITY = 80;
     private static final int BACKSTAGE_PASS_HIGH_QUALITY_DAY = 5;
     private static final int DEFAULT_QUALITY_DECREASE = 1;
+    private static final int DEFAULT_EXPIRED_QUALITY_DECREASE = DEFAULT_QUALITY_DECREASE * 2;
 
     Item[] items;
 
@@ -23,39 +26,37 @@ class GildedRose {
     }
 
     private void updateItemQuality(Item item) {
-        if (!isSpecialItem(item) && item.quality > 0) {
-            item.quality = item.quality - DEFAULT_QUALITY_DECREASE;
-        }
-        else {
-            if (item.quality < MAX_DEFAULT_QUALITY) {
-                item.quality = item.quality + 1;
+        final boolean isExpired = item.sellIn < 0;
 
-                if (isItem(item, BACKSTAGE_PASS)) {
-                    updateBackstagePass(item);
-                }
+        if (!isSpecialItem(item) && item.quality > 0) {
+            final int decreaseQualityAmount = isExpired ? DEFAULT_EXPIRED_QUALITY_DECREASE : DEFAULT_QUALITY_DECREASE;
+            item.quality -= decreaseQualityAmount;
+            return;
+        }
+        else if (item.quality < MAX_DEFAULT_QUALITY) {
+            item.quality = item.quality + 1;
+
+            if (isItem(item, BACKSTAGE_PASS)) {
+                updateBackstagePass(item);
             }
         }
 
-        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+        if (!isItem(item, SULFURAS)) {
             item.sellIn = item.sellIn - 1;
         }
 
-        if (item.sellIn < 0) {
-            if (!item.name.equals("Aged Brie")) {
-                if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                    if (item.quality > 0) {
-                        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-                            item.quality = item.quality - 1;
-                        }
-                    }
-                } else {
-                    item.quality = 0;
-                }
+        if (item.sellIn >= 0) {
+            return;
+        }
+
+        if (!isItem(item, AGED_BRIE)) {
+            if (!isItem(item, BACKSTAGE_PASS) && item.quality > 0 && !isItem(item, SULFURAS)) {
+                item.quality = item.quality - 1;
             } else {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                }
+                item.quality = 0;
             }
+        } else if (item.quality < MAX_DEFAULT_QUALITY) {
+            item.quality = item.quality + 1;
         }
     }
 
